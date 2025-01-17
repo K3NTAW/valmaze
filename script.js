@@ -15,6 +15,13 @@ let pathHistory = [];
 
 // Load maze image and find starting position
 function loadMaze(mazeNumber) {
+    // Strict check for locked mazes
+    if (mazeNumber > highestUnlockedMaze) {
+        console.error('Cannot load locked maze');
+        return Promise.reject('Maze is locked');
+    }
+    
+    currentMaze = mazeNumber;
     return new Promise((resolve, reject) => {
         mazeImage = new Image();
         mazeImage.onload = () => {
@@ -188,6 +195,7 @@ function updateMazeProgress() {
     mazeItems.forEach(item => {
         const mazeNum = parseInt(item.dataset.maze);
         item.classList.remove('current');
+        
         if (mazeNum <= highestUnlockedMaze) {
             item.classList.remove('locked');
             item.style.cursor = 'pointer';
@@ -307,12 +315,16 @@ function startCelebration() {
 document.querySelectorAll('.maze-item').forEach(item => {
     item.addEventListener('click', () => {
         const mazeNum = parseInt(item.dataset.maze);
-        // Only allow loading mazes that are unlocked
-        if (mazeNum <= highestUnlockedMaze) {
-            currentMaze = mazeNum;
-            loadMaze(currentMaze);
-            updateMazeProgress();
+        if (mazeNum > highestUnlockedMaze) {
+            // Prevent loading locked mazes
+            console.error('This maze is locked! Complete the previous maze first.');
+            return;
         }
+        currentMaze = mazeNum;
+        loadMaze(mazeNum).catch(error => {
+            console.error('Failed to load maze:', error);
+        });
+        updateMazeProgress();
     });
 });
 
@@ -324,6 +336,10 @@ checkButton.addEventListener('click', () => {
     }
 });
 
-// Initialize the first maze
-loadMaze(1);
-updateMazeProgress();
+// Initialize with first maze locked
+document.addEventListener('DOMContentLoaded', () => {
+    currentMaze = 1;
+    highestUnlockedMaze = 1;
+    loadMaze(1);
+    updateMazeProgress();
+});
