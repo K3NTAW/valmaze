@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Maze Adventure</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="maze-menu">
+            <h2>Maze Progress</h2>
+            <div class="maze-list">
+                <div class="maze-item current" data-maze="1" onclick="loadMaze(1)">Maze 1 🔒</div>
+                <div class="maze-item locked" data-maze="2" onclick="loadMaze(2)">Maze 2 🔒</div>
+                <div class="maze-item locked" data-maze="3" onclick="loadMaze(3)">Maze 3 🔒</div>
+                <div class="maze-item locked" data-maze="4" onclick="loadMaze(4)">Maze 4 🔒</div>
+                <div class="maze-item locked" data-maze="5" onclick="loadMaze(5)">Maze 5 🔒</div>
+                <div class="maze-item locked" data-maze="6" onclick="loadMaze(6)">Maze 6 🔒</div>
+            </div>
+        </div>
+        <div class="main-content">
+            <h1>Maze Adventure</h1>
+            <div class="maze-container">
+                <canvas id="labyrinth" width="800" height="800"></canvas>
+                <div class="controls">
+                    <p>Use WASD keys to move and draw your path</p>
+                    <input type="text" id="solution" placeholder="Enter the secret message">
+                    <button id="checkButton">Open</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="valentine" class="valentine hidden">
+        <div class="hearts"></div>
+        <div class="valentine-content">
+            <h2>My Dearest Love,</h2>
+            
+            <p>I sit here trying to find the perfect words to express just how much you mean to me, but no words could ever truly capture it all. The last year with you has been nothing short of magical, and I cherish every single memory we've made together. From the little moments that make me smile to the big ones that take my breath away, being with you has shown me what true happiness feels like.</p>
+            
+            <p>You are, without a doubt, the best thing that has ever happened to me. I love you so, so, so, so, so, so, <em>so</em> much — more than I could ever put into words or actions. You are the love of my life, my heart, and my everything.</p>
+            
+            <p>As Valentine's Day approaches, I can't help but think about how lucky I am to have you by my side. But more than anything, I want to take this moment to ask:</p>
+            
+            <h3>Would you do me the honor of being my valentine this year?</h3>
+            
+            <p>It would mean the world to me to celebrate this day of love with you, just as I hope to celebrate so many more beautiful days together in the future.</p>
+            
+            <p class="signature">All my love, forever and always,<br><strong>Kenta</strong></p>
+        </div>
+        <div class="hearts"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
