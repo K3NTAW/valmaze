@@ -3,6 +3,7 @@ const ctx = canvas.getContext('2d');
 const solution = document.getElementById('solution');
 const checkButton = document.getElementById('checkButton');
 const valentine = document.getElementById('valentine');
+const resetButton = document.getElementById('resetButton');
 
 const CANVAS_SIZE = 800;
 const CELL_SIZE = 2;
@@ -202,6 +203,7 @@ function updateMazeProgress() {
             if (mazeNum === currentMaze) {
                 item.classList.add('current');
                 item.textContent = `Maze ${mazeNum} 🎮`;
+                resetButton.textContent = `Reset Maze ${mazeNum} 🔄`;
             } else if (mazeNum < currentMaze) {
                 item.classList.add('completed');
                 item.textContent = `Maze ${mazeNum} ✅`;
@@ -311,6 +313,28 @@ function startCelebration() {
     });
 }
 
+// Reset functionality
+function resetMaze() {
+    // Clear the path
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Redraw the maze
+    ctx.drawImage(mazeImage, 0, 0, canvas.width, canvas.height);
+    
+    // Reset player position to start
+    const startPos = findStartPosition();
+    if (startPos) {
+        playerX = startPos.x;
+        playerY = startPos.y;
+        drawPlayer();
+    }
+    
+    // Update button text to show current maze
+    resetButton.textContent = `Reset Maze ${currentMaze} 🔄`;
+}
+
+resetButton.addEventListener('click', resetMaze);
+
 // Add click event listeners to maze items
 document.querySelectorAll('.maze-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -342,4 +366,84 @@ document.addEventListener('DOMContentLoaded', () => {
     highestUnlockedMaze = 1;
     loadMaze(1);
     updateMazeProgress();
+    resetButton.textContent = 'Reset Maze 1 🔄';
 });
+
+function findStartPosition() {
+    // Draw maze to canvas temporarily to find starting position
+    ctx.drawImage(mazeImage, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    
+    // Find the red dot in the maze
+    let startFound = false;
+    let dotSize = 0;  // Will store the detected dot size
+    let startPos = null;
+    
+    // Search through the entire maze for the red dot
+    const imageData = ctx.getImageData(0, 0, CANVAS_SIZE, CANVAS_SIZE).data;
+    for (let y = 0; y < CANVAS_SIZE && !startFound; y++) {
+        for (let x = 0; x < CANVAS_SIZE && !startFound; x++) {
+            const idx = (y * CANVAS_SIZE + x) * 4;
+            const r = imageData[idx];
+            const g = imageData[idx + 1];
+            const b = imageData[idx + 2];
+            
+            // More lenient red detection
+            if (r > 100 && // Lower red threshold
+                g < 100 && 
+                b < 100 && 
+                (r - Math.max(g, b)) > 50) { // Less strict red dominance
+                
+                // Find the size of the dot by scanning outward
+                let maxRadius = 0;
+                let scanning = true;
+                let radius = 0;
+                
+                while (scanning && radius < 20) { // Limit max scan radius
+                    radius++;
+                    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 4) {
+                        const checkX = Math.round(x + radius * Math.cos(angle));
+                        const checkY = Math.round(y + radius * Math.sin(angle));
+                        
+                        if (checkX >= 0 && checkX < CANVAS_SIZE && 
+                            checkY >= 0 && checkY < CANVAS_SIZE) {
+                            const checkIdx = (checkY * CANVAS_SIZE + checkX) * 4;
+                            const checkR = imageData[checkIdx];
+                            const checkG = imageData[checkIdx + 1];
+                            const checkB = imageData[checkIdx + 2];
+                            
+                            if (checkR > 100 && checkG < 100 && checkB < 100 && 
+                                (checkR - Math.max(checkG, checkB)) > 50) {
+                                maxRadius = radius;
+                            } else {
+                                scanning = false;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                if (maxRadius > 0) {
+                    dotSize = maxRadius;
+                    startPos = {x, y};
+                    startFound = true;
+                    console.log(`Found red dot at x=${x}, y=${y} with size=${dotSize}`);
+                }
+            }
+        }
+    }
+    
+    return startPos;
+}
+
+function drawPlayer() {
+    // Draw player with glow effect
+    ctx.fillStyle = 'rgba(255, 77, 77, 0.3)';
+    ctx.beginPath();
+    ctx.arc(playerX, playerY, CELL_SIZE/2, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.fillStyle = '#0066ff';  // Changed to blue
+    ctx.beginPath();
+    ctx.arc(playerX, playerY, window.currentDotSize || 5, 0, Math.PI * 2);
+    ctx.fill();
+}

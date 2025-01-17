@@ -15,12 +15,15 @@
                 <div class="maze-item locked" data-maze="4" onclick="loadMaze(4)">Maze 4 🔒</div>
                 <div class="maze-item locked" data-maze="5" onclick="loadMaze(5)">Maze 5 🔒</div>
                 <div class="maze-item locked" data-maze="6" onclick="loadMaze(6)">Maze 6 🔒</div>
+                <button id="resetButton" class="reset-button">Reset Maze 🔄</button>
             </div>
         </div>
         <div class="main-content">
             <h1>Maze Adventure</h1>
             <div class="maze-container">
                 <canvas id="labyrinth" width="800" height="800"></canvas>
+                <div class="maze-area">
+                </div>
                 <div class="controls">
                     <p>Use WASD keys to move and draw your path</p>
                     <input type="text" id="solution" placeholder="Enter the secret message">
