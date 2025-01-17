@@ -360,10 +360,10 @@ checkButton.addEventListener('click', () => {
     }
 });
 
-// Initialize with first maze locked
+// Initialize with all mazes unlocked
 document.addEventListener('DOMContentLoaded', () => {
     currentMaze = 1;
-    highestUnlockedMaze = 1;
+    highestUnlockedMaze = 6; // Set to 6 to unlock all mazes
     loadMaze(1);
     updateMazeProgress();
     resetButton.textContent = 'Reset Maze 1 🔄';
